@@ -1,8 +1,14 @@
 {
   "name": "fullstack-vite",
-  "version": "0.1.6",
-  "description": "",
+  "version": "0.1.9",
+  "description": "Build full-stack apps effortlessly with fullstack-vite, combining back-end and front-end in one project",
   "main": "dist/index.js",
+  "license": "ISC",
+  "homepage": "https://github.com/pkhadson/fullstack-vite",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pkhadson/fullstack-vite"
+  },
   "bin": {
     "fullstack-vite": "dist/bin/index.js"
   },
@@ -13,11 +19,9 @@
     "publish-package": "npm publish --access public --auth-type=legacy"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Patrick H Bertoldo <pkhadson@gmail.com>",
   "devDependencies": {
     "@types/hjson": "^2.4.6",
-    "@types/node": "^22.7.5",
     "tsx": "^4.19.1",
     "typescript": "^5.6.3",
     "vite": "*"
@@ -37,6 +41,7 @@
   "dependencies": {
     "esbuild": "^0.24.0",
     "hjson": "^3.2.2",
-    "nanospinner": "^1.1.0"
+    "nanospinner": "^1.1.0",
+    "@types/node": "^22.7.5"
   }
 }

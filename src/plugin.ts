@@ -1,16 +1,16 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { PluginOption } from "vite";
-import { ServiceMap } from "./interfaces/service";
 import PROXY from "./proxy";
+import isVite from "./utils/is-vite";
 
 export interface FullstackOptions {
-  // services: ServiceMap;
   server: (req: IncomingMessage, res: ServerResponse) => void;
   cors?: string;
-  acceptedHeaders?: string;
+  apiUrl?: string;
 }
 
 export function Fullstack(props: FullstackOptions): PluginOption {
+  props.apiUrl ??= isVite() ? "/api" : "http://localhost:3000";
   return {
     name: "fullstack-vite",
     apply: "serve",
@@ -29,7 +29,7 @@ export function Fullstack(props: FullstackOptions): PluginOption {
     },
     transform(code, id) {
       if (id.endsWith("src/main.ts")) {
-        code = `${code};\n\n${PROXY}`;
+        code = `${code};\n\n${PROXY};window.___fullstack.apiUrl = '${props.apiUrl}';`;
         return {
           code,
           map: null,
@@ -40,8 +40,17 @@ export function Fullstack(props: FullstackOptions): PluginOption {
         const name = code.match(/export default (\w+)/)?.[1];
 
         return {
-          code: `export default window.___fullstack.proxy('${name}')`, // Substitua com o conteúdo que deseja
-          map: null, // Para que o Vite não precise gerar um sourcemap para isso
+          code: `export default new Proxy(
+            {},
+            {
+              get: function (target, prop) {
+                return async (...a) => {
+                  if (!window.___fullstack?.callFetch) await new Promise(r => setTimeout(r, 100));
+                  return await window.___fullstack.callFetch('${name}', prop, a);
+                };
+              },
+            }\n  );`,
+          map: null,
         };
       }
     },

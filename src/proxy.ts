@@ -3,23 +3,18 @@ const PROXY = `const getUrl = () => {
     return process.env.FASTBFF_URL;
 
   return (
+    window.___fullstack.apiUrl ||
     import.meta.env.FASTBFF_URL ||
-    import.meta.env.VITE_FASTBFF_URL ||
-    "http://localhost:3000"
+    import.meta.env.VITE_FASTBFF_URL
   );
 };
 
 const callFetch = async (serviceName, methodName, data) => {
   const url = getUrl();
-  const token = await window.getToken();
 
   const headers = {
     "Content-Type": "application/json",
   };
-
-  if (localStorage.getItem("company"))
-    headers["x-company"] = localStorage.getItem("company");
-  if (token) headers.Authorization = \`Bearer \${token}\`;
 
   const response = await fetch(url, {
     method: "POST",
@@ -38,19 +33,7 @@ const callFetch = async (serviceName, methodName, data) => {
   throw { code: response.status, response };
 };
 
-const proxy = (key) =>
-  new Proxy(
-    {},
-    {
-      get: function (target, prop) {
-        return (...a) => {
-          return callFetch(key, prop, a);
-        };
-      },
-    }
-  );
-
-window.___fullstack = { proxy };
+window.___fullstack = { callFetch };
 `;
 
 export default PROXY;
