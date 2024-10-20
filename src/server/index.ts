@@ -1,6 +1,4 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { FullstackOptions } from "../plugin";
-import { hooks } from "./hooks";
 import { ServiceMap } from "../interfaces/service";
 import { IServer } from "..";
 import http from "http";
@@ -62,28 +60,24 @@ export async function useServer(
     return;
   }
 
-  hooks.run(new Map(), async () => {
-    try {
-      // middleware here
-      const method = services[serviceName][methodName] as (
-        ...args: any[]
-      ) => any;
+  try {
+    // middleware here
+    const method = services[serviceName][methodName] as (...args: any[]) => any;
 
-      const result = await method.call(services[serviceName], ...body);
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify(result));
-    } catch (error: any) {
-      console.error(error);
-      let code = error?.code || 500;
+    const result = await method.call(services[serviceName], ...body);
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(result));
+  } catch (error: any) {
+    console.error(error);
+    let code = error?.code || 500;
 
-      if (code < 100 || code >= 600) code = 500;
+    if (code < 100 || code >= 600) code = 500;
 
-      res.writeHead(code, { "Content-Type": "application/json" });
-      res.end(
-        JSON.stringify({ error: error.message || "Internal Server Error" })
-      );
-    }
-  });
+    res.writeHead(code, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({ error: error.message || "Internal Server Error" })
+    );
+  }
 }
 
 export const runServer = (server: IServer) => {

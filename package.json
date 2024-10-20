@@ -1,6 +1,6 @@
 {
   "name": "fullstack-vite",
-  "version": "0.1.9",
+  "version": "0.1.14",
   "description": "Build full-stack apps effortlessly with fullstack-vite, combining back-end and front-end in one project",
   "main": "dist/index.js",
   "license": "ISC",
@@ -36,6 +36,12 @@
       "node": "./dist/index.js",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./hooks": {
+      "types": "./dist/server/hooks.d.ts",
+      "node": "./dist/server/hooks.js",
+      "import": "./dist/server/hooks.js",
+      "default": "./dist/server/hooks.js"
     }
   },
   "dependencies": {
